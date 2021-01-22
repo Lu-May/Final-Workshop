@@ -60,7 +60,6 @@ class ItemViewModel {
   }
   
   func addPurchasedItem(_ count: Int, cellForRowAt row: Int) {
-//    self.purchasedItems = PurchasedItemRepository.all()
     if let purchasedItems = self.purchasedItemsRepository {
       for purchasedItem in purchasedItems {
         purchasedItem.delete()
@@ -87,11 +86,9 @@ class ItemViewModel {
     }
     purchasedItems = purchasedItems.filter{ $0.count != 0 }
     for purchasedItem in purchasedItems {
-      print(purchasedItem.count)
-      PurchasedItemRepository.add(count: purchasedItem.count, promotion: purchasedItem.promotion, item: ItemRepository(value: purchasedItem.item), subtotal: Double(purchasedItem.subtotal), subreceipt: purchasedItem.subreceipt)
+      PurchasedItemRepository.add(barcode: purchasedItem.item.barcode ,count: purchasedItem.count, promotion: purchasedItem.promotion, item: ItemRepository(value: purchasedItem.item), subtotal: Double(purchasedItem.subtotal), subreceipt: purchasedItem.subreceipt)
     }
     self.purchasedItemsRepository = PurchasedItemRepository.all()
-    print(Realm.Configuration.defaultConfiguration.fileURL ?? "nil")
   }
   
   func receiptPrint() -> String {
