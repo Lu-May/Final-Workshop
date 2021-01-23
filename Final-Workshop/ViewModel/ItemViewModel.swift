@@ -84,7 +84,7 @@ class ItemViewModel {
     }
     purchasedItems = purchasedItems.filter{ $0.count != 0 }
     for purchasedItem in purchasedItems {
-      PurchasedItemRepository.add(barcode: purchasedItem.item.barcode ,count: purchasedItem.count, promotion: purchasedItem.promotion, item: ItemRepository(value: purchasedItem.item), subtotal: Double(purchasedItem.subtotal), subreceipt: purchasedItem.subreceipt)
+      PurchasedItemRepository.add(barcode: purchasedItem.item.barcode ,count: purchasedItem.count, promotion: purchasedItem.promotion, item: ItemRepository(value: purchasedItem.item), subtotal: Double(purchasedItem.subtotal))
     }
     self.purchasedItemsRepository = PurchasedItemRepository.all()
   }
@@ -97,7 +97,7 @@ class ItemViewModel {
     for purchasedItem in purchasedItems {
       totalPrice += purchasedItem.subtotal
       totalPriceWithoutPromotion += Float(purchasedItem.count) * Float(purchasedItem.item.price)
-      receipt += purchasedItem.subreceipt
+      receipt += "名称：\(purchasedItem.item.name)，数量：\(purchasedItem.count)\(purchasedItem.item.unit)，单价：¥\(String(format: "%0.2f",purchasedItem.item.price))\n小计：¥\(String(format: "%0.2f",purchasedItem.subtotal))\n"
     }
     
     receiptLableText = """

@@ -20,8 +20,4 @@ struct PurchasedItem {
     }
     return Float(count) * Float(item.price)
   }
-  
-  var subreceipt: String {
-    return "名称：\(item.name)，数量：\(count)\(item.unit)，单价：¥\(String(format: "%0.2f",item.price))\n小计：¥\(String(format: "%0.2f",subtotal))\n";
-  }
 }
