@@ -14,10 +14,6 @@ import RealmSwift
   @objc dynamic var unit = ""
   @objc dynamic var price: Double = 0.0
   
-//  init(item: Item) {
-//    self.barcode = item.barcode
-//  }
-  
   override static func primaryKey() -> String? {
       return "barcode"
     }
@@ -41,19 +37,11 @@ extension ItemRepository {
     -> ItemRepository {
     let item = ItemRepository(item: item)
       try! realm.write {
-//        realm.create(ItemRepository.self, value: item, update: .modified)
         realm.add(item, update: .modified)
       }
       return item
   }
 
-  func toggleCompleted(_ price: Double) {
-    guard let realm = realm else { return }
-    try! realm.write {
-      self.price = price
-    }
-  }
-  
   func delete() {
     guard let realm = realm else { return }
     try! realm.write {

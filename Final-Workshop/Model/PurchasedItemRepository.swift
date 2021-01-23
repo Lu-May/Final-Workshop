@@ -42,14 +42,7 @@ extension PurchasedItemRepository {
         realm.add(item, update: .modified)
       }
   }
-
-//  func toggleCompleted(_ price: Double) {
-//    guard let realm = realm else { return }
-//    try! realm.write {
-//      self.price = price
-//    }
-//  }
-//  
+  
   func delete() {
     guard let realm = realm else { return }
     try! realm.write {

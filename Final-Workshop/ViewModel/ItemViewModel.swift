@@ -46,8 +46,6 @@ class ItemViewModel {
           ItemRepository.add(item: item)
         }
       }
-      self.items = ItemRepository.all()
-//      print(Realm.Configuration.defaultConfiguration.fileURL ?? "nil")
       completion()
     }
   }
