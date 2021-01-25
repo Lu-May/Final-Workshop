@@ -31,9 +31,9 @@ class ItemViewModel {
   }
   
   func getItems(completion: @escaping () -> Void) {
-    if purchasedItemsRepository?.count == 0 || purchasedItemsRepository?.count == nil {
+    self.purchasedItemsRepository = PurchasedItemRepository.all()
+    if purchasedItemsRepository?.count == 0 {
       itemQueryService.getSearchResults() { items, _  in
-        self.purchasedItemsRepository = PurchasedItemRepository.all()
         if let itemList = items {
           for item in itemList {
             PurchasedItemRepository.add(barcode: item.barcode, count: 0, promotion: false, item: ItemRepository(item: item))
@@ -42,7 +42,7 @@ class ItemViewModel {
         completion()
       }
     }
-    print(Realm.Configuration.defaultConfiguration.fileURL)
+    
     self.purchasedItemsRepository = PurchasedItemRepository.all()
   }
   
@@ -76,7 +76,6 @@ class ItemViewModel {
       count: count ,
       promotion: promotions.contains(purchasedItemsRepository?[row].item?.barcode ?? ""),
       item: purchasedItemsRepository?[row].item ?? ItemRepository())
-//      subtotal: getSubtotal(promotions.contains(purchasedItemsRepository?[row].item?.barcode ?? ""), purchasedItemsRepository?[row].item ?? ItemRepository(), count))
     self.purchasedItemsRepository = PurchasedItemRepository.all()
   }
   
