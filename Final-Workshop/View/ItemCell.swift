@@ -43,13 +43,13 @@ class ItemCell: UITableViewCell {
     countLable.text = "数量:\(input)"
   }
   
-  func configure(with item: ItemRepository, promotion: [String], addItem: @escaping (Int) -> Void) {
+  func configure(with purchasedItem: PurchasedItemRepository, promotion: [String], addItem: @escaping (Int) -> Void) {
     self.addItem = addItem
-    nameLable.text = item.name
-    unitLable.text = "(单位:\(item.unit))"
-    priceLable.text = "单价:¥\(item.price)"
-    promotionLable?.text = promotion.contains(item.barcode) ? "买二送一" : ""
+    nameLable.text = purchasedItem.item?.name
+    unitLable.text = "(单位:\(String(describing: purchasedItem.item?.unit ?? "")))"
+    priceLable.text = "单价:¥\(String(describing: purchasedItem.item?.price ?? 0))"
+    promotionLable?.text = promotion.contains(purchasedItem.item?.barcode ?? "") ? "买二送一" : ""
     
-    setCountText(stepperInit(item.barcode))
+    setCountText(stepperInit(purchasedItem.item?.barcode ?? ""))
   }
 }

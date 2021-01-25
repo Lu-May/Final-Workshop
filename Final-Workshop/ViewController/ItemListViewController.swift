@@ -42,7 +42,7 @@ class ItemListViewController: UIViewController {
 
 extension ItemListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return itemViewModel.items?.count ?? 0
+    return itemViewModel.purchasedItemsRepository?.count ?? 0
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -50,7 +50,7 @@ extension ItemListViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     
-    cell.configure(with: itemViewModel.items?[indexPath.row] ?? ItemRepository(), promotion: itemViewModel.promotions) { [weak self] count in
+    cell.configure(with: itemViewModel.purchasedItemsRepository?[indexPath.row] ?? PurchasedItemRepository(), promotion: itemViewModel.promotions) { [weak self] count in
       self?.itemViewModel.addPurchasedItem(count, cellForRowAt: indexPath.row)
     }
     return cell

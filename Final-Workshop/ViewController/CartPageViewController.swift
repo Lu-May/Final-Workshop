@@ -43,7 +43,8 @@ extension CartPageViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     
-    cell.configure(with: (viewModel.purchasedItemsRepository?[indexPath.row])!)
+//    print(viewModel.purchasedItemsRepository?.filter{ $0.count != 0 }[indexPath.row])
+    cell.configure(with: (viewModel.purchasedItemsRepository?[indexPath.row]) ?? PurchasedItemRepository())
     return cell
   }
 }

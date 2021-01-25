@@ -33,7 +33,7 @@ extension PurchasedItemRepository {
   static func all(in realm: Realm = try! Realm()) -> Results<PurchasedItemRepository> {
     return realm.objects(PurchasedItemRepository.self)
   }
-
+  
   static func add(barcode: String, count: Int, promotion: Bool, item: ItemRepository, subtotal: Double, in realm: Realm = try! Realm()) {
     let item = PurchasedItemRepository(barcode ,count, promotion, item, subtotal)
       try! realm.write {

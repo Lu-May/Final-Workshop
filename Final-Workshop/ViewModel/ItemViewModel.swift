@@ -11,10 +11,8 @@ import RealmSwift
 class ItemViewModel {
   var itemQueryService = ItemQueryService()
   var promotionQueryService = PromotionQueryService()
-  var items: Results<ItemRepository>?
   var clearAfterReceipt = false
   var purchasedItemsRepository: Results<PurchasedItemRepository>?
-  var purchasedItems: [PurchasedItem] = []
   var promotions: [String] = []
   
   func setclearAfterReceiptFalse() {
@@ -22,30 +20,24 @@ class ItemViewModel {
   }
   
   func clearPurchaseedItems() {
-    purchasedItems = []
-    if let purchasedItems = self.purchasedItemsRepository {
-      for purchasedItem in purchasedItems {
-        purchasedItem.delete()
-      }
+    if let purchasedItemsRepository = purchasedItemsRepository {
+      for purchasedItem in purchasedItemsRepository {
+        PurchasedItemRepository.add(barcode: purchasedItem.barcode, count: 0, promotion: false, item: purchasedItem.item ?? ItemRepository(), subtotal: 0)      }
     }
-    
+    self.purchasedItemsRepository = PurchasedItemRepository.all()
     clearAfterReceipt = true
   }
   
   func getItems(completion: @escaping () -> Void) {
     itemQueryService.getSearchResults() { items, _  in
-      self.items = ItemRepository.all()
-
-      if let item = self.items {
-        for item in item {
-          item.delete()
-        }
-      }
+      self.purchasedItemsRepository = PurchasedItemRepository.all()
+      
       if let itemList = items {
         for item in itemList {
-          ItemRepository.add(item: item)
+          PurchasedItemRepository.add(barcode: item.barcode, count: 0, promotion: false, item: ItemRepository(item: item), subtotal: 0)
         }
       }
+      self.purchasedItemsRepository = PurchasedItemRepository.all()
       completion()
     }
   }
@@ -57,35 +49,19 @@ class ItemViewModel {
     }
   }
   
-  func addPurchasedItem(_ count: Int, cellForRowAt row: Int) {
-    if let purchasedItems = self.purchasedItemsRepository {
-      for purchasedItem in purchasedItems {
-        purchasedItem.delete()
+  func getSubtotal(_ promotion: Bool, _ item: ItemRepository, _ count: Int) -> Double {
+    if promotion {
+      if count >= 3 {
+        return Double((count/3)*2 + count%3) * Double(item.price)
       }
     }
+    return Double(count) * Double(item.price)
+  }
+  
+  func addPurchasedItem(_ count: Int, cellForRowAt row: Int) {
     
-    let purchasedItem = purchasedItems.filter{ $0.item.barcode == self.items?[row].barcode }.first
-    if purchasedItem != nil {
-      let updatedItems = purchasedItems.map({ purchasedItem -> PurchasedItem in
-        if purchasedItem.item.barcode == items?[row].barcode {
-          var item = purchasedItem
-          item.count = count
-          return item
-        }
-        return purchasedItem
-      })
-      purchasedItems = updatedItems
-    } else {
-      self.purchasedItems.append(contentsOf: [PurchasedItem(
-        count: count,
-        promotion: promotions.contains(self.items?[row].barcode ?? ""),
-        item: items?[row] ?? ItemRepository()
-      )])
-    }
-    purchasedItems = purchasedItems.filter{ $0.count != 0 }
-    for purchasedItem in purchasedItems {
-      PurchasedItemRepository.add(barcode: purchasedItem.item.barcode ,count: purchasedItem.count, promotion: purchasedItem.promotion, item: ItemRepository(value: purchasedItem.item), subtotal: Double(purchasedItem.subtotal))
-    }
+    PurchasedItemRepository.add(barcode: purchasedItemsRepository?[row].item?.barcode ?? "",count: count , promotion: promotions.contains(purchasedItemsRepository?[row].item?.barcode ?? ""), item: ItemRepository(value: purchasedItemsRepository?[row].item ?? ItemRepository()), subtotal: getSubtotal(promotions.contains(purchasedItemsRepository?[row].item?.barcode ?? ""), purchasedItemsRepository?[row].item ?? ItemRepository(), count))
+    print(Realm.Configuration.defaultConfiguration.fileURL)
     self.purchasedItemsRepository = PurchasedItemRepository.all()
   }
   
@@ -94,11 +70,14 @@ class ItemViewModel {
     var totalPriceWithoutPromotion: Float = 0
     var receipt: String = ""
     var receiptLableText = ""
-    for purchasedItem in purchasedItems {
-      totalPrice += purchasedItem.subtotal
-      totalPriceWithoutPromotion += Float(purchasedItem.count) * Float(purchasedItem.item.price)
-      receipt += "名称：\(purchasedItem.item.name)，数量：\(purchasedItem.count)\(purchasedItem.item.unit)，单价：¥\(String(format: "%0.2f",purchasedItem.item.price))\n小计：¥\(String(format: "%0.2f",purchasedItem.subtotal))\n"
+    if let purchasedItemsRepository = purchasedItemsRepository {
+      for purchasedItem in purchasedItemsRepository.filter({ $0.count != 0 }) {
+        totalPrice += Float(purchasedItem.subtotal)
+        totalPriceWithoutPromotion += Float(purchasedItem.count) * Float(purchasedItem.item?.price ?? 0)
+        receipt += "名称：\(purchasedItem.item?.name ?? "")，数量：\(purchasedItem.count)\(purchasedItem.item?.unit ?? "")，单价：¥\(String(format: "%0.2f",purchasedItem.item?.price ?? 0))\n小计：¥\(String(format: "%0.2f",purchasedItem.subtotal))\n"
+      }
     }
+    
     
     receiptLableText = """
                         ***Receipts***

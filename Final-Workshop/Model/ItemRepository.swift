@@ -26,26 +26,26 @@ import RealmSwift
     self.price = Double(item.price)
   }
 }
-
-extension ItemRepository {
-  static func all(in realm: Realm = try! Realm()) -> Results<ItemRepository> {
-    return realm.objects(ItemRepository.self)
-  }
-
-  @discardableResult
-  static func add(item: Item, in realm: Realm = try! Realm())
-    -> ItemRepository {
-    let item = ItemRepository(item: item)
-      try! realm.write {
-        realm.add(item, update: .modified)
-      }
-      return item
-  }
-
-  func delete() {
-    guard let realm = realm else { return }
-    try! realm.write {
-      realm.delete(self)
-    }
-  }
-}
+//
+//extension ItemRepository {
+//  static func all(in realm: Realm = try! Realm()) -> Results<ItemRepository> {
+//    return realm.objects(ItemRepository.self)
+//  }
+//
+//  @discardableResult
+//  static func add(item: Item, in realm: Realm = try! Realm())
+//    -> ItemRepository {
+//    let item = ItemRepository(item: item)
+//      try! realm.write {
+//        realm.add(item, update: .modified)
+//      }
+//      return item
+//  }
+//
+//  func delete() {
+//    guard let realm = realm else { return }
+//    try! realm.write {
+//      realm.delete(self)
+//    }
+//  }
+//}
