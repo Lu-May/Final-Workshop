@@ -13,19 +13,25 @@ import RealmSwift
   @objc dynamic var count = 0
   @objc dynamic var promotion = false
   @objc dynamic var item: ItemRepository?
-  @objc dynamic var subtotal = 0.0
+  var subtotal: Double {
+    if promotion {
+      if count >= 3 {
+        return Double((count/3)*2 + count%3) * Double(item?.price ?? 0)
+      }
+    }
+    return Double(count) * Double(item?.price ?? 0)
+  }
 
   override static func primaryKey() -> String? {
       return "barcode"
     }
   
-  convenience init(_ barcode: String, _ count: Int, _ promotion: Bool, _ item: ItemRepository, _ subtotal: Double) {
+  convenience init(_ barcode: String, _ count: Int, _ promotion: Bool, _ item: ItemRepository) {
     self.init()
     self.barcode = item.barcode
     self.count = count
     self.promotion = promotion
     self.item = item
-    self.subtotal = subtotal
   }
 }
 
@@ -34,8 +40,8 @@ extension PurchasedItemRepository {
     return realm.objects(PurchasedItemRepository.self)
   }
   
-  static func add(barcode: String, count: Int, promotion: Bool, item: ItemRepository, subtotal: Double, in realm: Realm = try! Realm()) {
-    let item = PurchasedItemRepository(barcode ,count, promotion, item, subtotal)
+  static func add(barcode: String, count: Int, promotion: Bool, item: ItemRepository, in realm: Realm = try! Realm()) {
+    let item = PurchasedItemRepository(barcode ,count, promotion, item)
       try! realm.write {
         realm.add(item, update: .modified)
       }

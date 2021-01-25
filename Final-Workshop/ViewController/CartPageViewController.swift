@@ -24,10 +24,12 @@ class CartPageViewController: UIViewController {
   
   func configure(_ itemViewModel: ItemViewModel) {
     viewModel = itemViewModel
+    viewModel.purchasedItems = viewModel.getPurchasedItem()
   }
   
   @IBAction func clickForwardToReceiptPage(_ sender: Any) {
     let receiptViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ReceiptViewController") as ReceiptViewController
+    viewModel.purchasedItems = viewModel.clearPurchasedItem()
     receiptViewController.configure(viewModel)
     show(receiptViewController, sender: self)
   }
@@ -35,7 +37,7 @@ class CartPageViewController: UIViewController {
 
 extension CartPageViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return viewModel.purchasedItemsRepository?.count ?? 0
+    return viewModel.purchasedItems.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -43,8 +45,7 @@ extension CartPageViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     
-//    print(viewModel.purchasedItemsRepository?.filter{ $0.count != 0 }[indexPath.row])
-    cell.configure(with: (viewModel.purchasedItemsRepository?[indexPath.row]) ?? PurchasedItemRepository())
+    cell.configure(with: (viewModel.purchasedItems[indexPath.row]))
     return cell
   }
 }

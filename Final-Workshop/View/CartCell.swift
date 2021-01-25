@@ -20,11 +20,6 @@ class CartCell: UITableViewCell {
       priceLable?.text = "¥\(String.init(format:"%.2f", purchasedItem.item?.price ?? 0))"
       countLable?.text = "x\(purchasedItem.count)\(String(describing: purchasedItem.item?.unit ?? ""))"
       subtotalLable?.text = "¥\(String.init(format:"%.2f", purchasedItem.subtotal))"
-    } else {
-      nameLable?.text = ""
-      priceLable?.text = ""
-      countLable?.text = ""
-      subtotalLable?.text = ""
     }
   }
 }

@@ -18,11 +18,11 @@ class ItemCell: UITableViewCell {
   
   var addItem: ((Int) -> Void)!
   
-  func stepperInit( _ barcede: String) -> Int {
+  func stepperInit( _ count: Double) -> Int {
     //设置stepper的范围与初始值
     stepper.maximumValue = 100
     stepper.minimumValue = 0
-    stepper.value = 0
+    stepper.value = count
     
     //设置每次递减的值
     stepper.stepValue = 1
@@ -50,6 +50,6 @@ class ItemCell: UITableViewCell {
     priceLable.text = "单价:¥\(String(describing: purchasedItem.item?.price ?? 0))"
     promotionLable?.text = promotion.contains(purchasedItem.item?.barcode ?? "") ? "买二送一" : ""
     
-    setCountText(stepperInit(purchasedItem.item?.barcode ?? ""))
+    setCountText(stepperInit(Double(purchasedItem.count)))
   }
 }
